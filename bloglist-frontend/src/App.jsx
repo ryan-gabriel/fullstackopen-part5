@@ -4,11 +4,13 @@ import blogService from "./services/blogs";
 import CreateBlogForm from "./components/CreateBlogForm";
 import LoginForm from "./components/LoginForm";
 import logoutService from "./services/auth/logout";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successCreateMessage, setSuccessCreateMessage] = useState(null);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -32,16 +34,20 @@ const App = () => {
 
   if (user === null) {
     return (
-      <LoginForm setErrorMessage={setErrorMessage} setUser={setUser}/>
+      <div>
+        {errorMessage && <Notification message={errorMessage} type='error'/>}
+        <LoginForm setErrorMessage={setErrorMessage} setUser={setUser}/>
+      </div>
     );
   }
 
   return (
     <div>
+      {successCreateMessage && <Notification message={successCreateMessage} type='success'/>}
       <h2>blogs</h2>
       <p>{user.name} logged in <button onClick={handleLogout}>Log Out</button></p>
 
-      <CreateBlogForm setErrorMessage={setErrorMessage} blogs={blogs} setBlogs={setBlogs}/>
+      <CreateBlogForm setSuccessCreateMessage={setSuccessCreateMessage} setErrorMessage={setErrorMessage} blogs={blogs} setBlogs={setBlogs}/>
       
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />

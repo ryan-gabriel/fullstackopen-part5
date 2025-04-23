@@ -18,11 +18,11 @@ const LoginForm = ({ setErrorMessage, setUser }) => {
       setUser(user);
       setUsername("");
       setPassword("");
-    } catch (exception) {
-      setErrorMessage("Wrong credentials");
+    } catch (error) {
+      setErrorMessage("Wrong username or password");
       setTimeout(() => {
         setErrorMessage(null);
-      }, 5000);
+      }, 3000);
     }
   };
   return (
