@@ -27,7 +27,7 @@ blogsRouter.post("/", async (request, response, next) => {
     const body = request.body;
     
     if (!body.title || !body.author || !body.url) {
-      return response.status(400).json({ Error: "Missing values" });
+      return response.status(400).json({ error: "Missing values" });
     }
 
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
