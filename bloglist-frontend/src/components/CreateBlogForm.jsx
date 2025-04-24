@@ -6,6 +6,7 @@ const CreateBlogForm = ({
   setBlogs,
   setErrorMessage,
   setSuccessCreateMessage,
+  formRef,
 }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -26,10 +27,14 @@ const CreateBlogForm = ({
       setTimeout(() => {
         setSuccessCreateMessage(null);
       }, 3000);
-      
+
       setTitle("");
       setAuthor("");
       setUrl("");
+
+      if (formRef && formRef.current) {
+        formRef.current.toggleVisibility();
+      }
     } catch (error) {
       setErrorMessage(error.response.data.error);
       console.error(error.response.data.error);

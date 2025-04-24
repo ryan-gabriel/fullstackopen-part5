@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import CreateBlogForm from "./components/CreateBlogForm";
 import LoginForm from "./components/LoginForm";
 import logoutService from "./services/auth/logout";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -23,32 +24,45 @@ const App = () => {
       setUser(user);
     }
   }, []);
-  
+
   const handleLogout = async (event) => {
     event.preventDefault();
-    logoutService.logout()
+    logoutService.logout();
     setUser(null);
     setUsername("");
     setPassword("");
   };
 
+  const blogFormRef = useRef();
+
   if (user === null) {
     return (
       <div>
-        {errorMessage && <Notification message={errorMessage} type='error'/>}
-        <LoginForm setErrorMessage={setErrorMessage} setUser={setUser}/>
+        {errorMessage && <Notification message={errorMessage} type="error" />}
+        <LoginForm setErrorMessage={setErrorMessage} setUser={setUser} />
       </div>
     );
   }
 
   return (
     <div>
-      {successCreateMessage && <Notification message={successCreateMessage} type='success'/>}
+      {successCreateMessage && (
+        <Notification message={successCreateMessage} type="success" />
+      )}
       <h2>blogs</h2>
-      <p>{user.name} logged in <button onClick={handleLogout}>Log Out</button></p>
+      <p>
+        {user.name} logged in <button onClick={handleLogout}>Log Out</button>
+      </p>
+      <Togglable buttonLabel="new note" ref={blogFormRef}>
+        <CreateBlogForm
+          setSuccessCreateMessage={setSuccessCreateMessage}
+          setErrorMessage={setErrorMessage}
+          blogs={blogs}
+          setBlogs={setBlogs}
+          formRef={blogFormRef}
+        />
+      </Togglable>
 
-      <CreateBlogForm setSuccessCreateMessage={setSuccessCreateMessage} setErrorMessage={setErrorMessage} blogs={blogs} setBlogs={setBlogs}/>
-      
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
