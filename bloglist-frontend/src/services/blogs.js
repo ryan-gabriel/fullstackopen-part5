@@ -6,6 +6,11 @@ const getAll = () => {
   return request.then((response) => response.data);
 };
 
+const getBlog = (id) => {
+  const request = axios.get(`${baseUrl}/${id}`);
+  return request.then((response) => response.data);
+}
+
 const create = async (blog) => {
   try{
     const storedUser = window.localStorage.getItem("loggedNoteappUser");
@@ -21,4 +26,4 @@ const create = async (blog) => {
   }
 };
 
-export default { getAll, create };
+export default { getAll, create, getBlog };
