@@ -14,7 +14,9 @@ const App = () => {
   const [successCreateMessage, setSuccessCreateMessage] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService
+      .getAll()
+      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
   }, []);
 
   useEffect(() => {
@@ -40,15 +42,37 @@ const App = () => {
       blogFormRef.current.toggleVisibility();
       const createdBlog = await blogService.create(blogObject);
       setBlogs(blogs.concat(createdBlog));
-      setSuccessCreateMessage(`A new blog "${blogObject.title}" by ${blogObject.author} added`);
-      
+      setSuccessCreateMessage(
+        `A new blog "${blogObject.title}" by ${blogObject.author} added`
+      );
+
       setTimeout(() => {
         setSuccessCreateMessage(null);
       }, 3000);
-      
     } catch (error) {
       setErrorMessage(error.response.data.error);
-      throw error
+      throw error;
+    }
+  };
+
+  const updateLike = async (id) => {
+    try {
+      const blogToUpdate = await blogService.getBlog(id);
+      const updatedBlog = {
+        ...blogToUpdate,
+        likes: blogToUpdate.likes + 1
+      };
+      
+      const response = await blogService.updateLike(id, updatedBlog);
+      console.log(response);
+
+      setBlogs(
+        blogs
+          .map((b) => (b.id === id ? response : b))
+          .sort((a, b) => b.likes - a.likes)
+      );
+    } catch (error) {
+      console.error("Failed to update likes", error);
     }
   };
 
@@ -75,7 +99,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateLike={updateLike} />
       ))}
     </div>
   );

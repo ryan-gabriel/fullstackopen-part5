@@ -1,10 +1,9 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateLike }) => {
   const [visible, setVisible] = useState(false);
-  const [likes, setLikes] = useState(blog.likes)
-
+  const [likes, setLikes] = useState(blog.likes);
 
   const blogStyle = {
     paddingTop: 10,
@@ -20,18 +19,16 @@ const Blog = ({ blog }) => {
     setVisible(!visible);
   };
 
-  const handleLike = async() => {
-    try{
-      const curBlog = await blogService.getBlog(blog.id)
-      const newBlog = { ...curBlog, likes: curBlog.likes + 1 };
-      const updatedBlog = await blogService.updateLike(newBlog.id, newBlog)
-      setLikes(updatedBlog.likes)
+  const handleLike = async () => {
+    const updatedLikes = likes + 1;
+    setLikes(updatedLikes);
+    try {
+      await updateLike(blog.id);
+    } catch (error) {
+      setLikes(likes);
+      console.error("Failed to update like", error);
     }
-    catch(error){
-      throw error
-    }
-
-  }
+  };
 
   return (
     <div style={blogStyle}>

@@ -83,14 +83,29 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 });
 
 blogsRouter.put("/:id", async (request, response, next) => {
-  try { 
-    const { id, ...blog } = request.body;
-    if (!blog.title || !blog.author || !blog.url || !blog.likes) {
-      return response.status(400).json({ error: "Missing values" });
+  try {
+    const { title, author, url, likes, user } = request.body;
+
+    if (!title || !author || !url || likes === undefined) {
+      return response.status(400).json({ error: "Missing required fields" });
     }
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
-      new: true,
-    });
+
+    const blogToUpdate = {
+      title,
+      author,
+      url,
+      likes,
+      user,
+    };
+
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      blogToUpdate,
+      {
+        new: true,
+      }
+    ).populate("user", { username: 1, name: 1 });
+
     response.json(updatedBlog);
   } catch (error) {
     next(error);
