@@ -1,8 +1,7 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const jwt = require('jsonwebtoken')
-
+const jwt = require("jsonwebtoken");
 
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
@@ -25,7 +24,7 @@ blogsRouter.get("/:id", async (request, response, next) => {
 blogsRouter.post("/", async (request, response, next) => {
   try {
     const body = request.body;
-    
+
     if (!body.title || !body.author || !body.url) {
       return response.status(400).json({ error: "Missing values" });
     }
@@ -61,22 +60,22 @@ blogsRouter.post("/", async (request, response, next) => {
 });
 
 blogsRouter.delete("/:id", async (request, response, next) => {
-  
-  
   try {
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
-    
+
     if (!decodedToken.id) {
       return response.status(401).json({ error: "token invalid" });
     }
     const blog = await Blog.findById(request.params.id);
-    
-    if(decodedToken.id.toString() != blog.user.toString()){
-      return response.status(401).json({ error: "User not allowed to delete this blog" })
+
+    if (decodedToken.id.toString() != blog.user.toString()) {
+      return response
+        .status(401)
+        .json({ error: "User not allowed to delete this blog" });
     }
 
     await blog.deleteOne();
-    
+
     response.status(204).end();
   } catch (error) {
     next(error);
@@ -84,36 +83,15 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 });
 
 blogsRouter.put("/:id", async (request, response, next) => {
-  try {
-    const { title, author, url, likes } = request.body;
-
-    const authorization = request.get("authorization");
-    if (!authorization || !authorization.toLowerCase().startsWith("bearer ")) {
-      return response.status(401).json({ error: "token missing or invalid" });
+  try { 
+    const { id, ...blog } = request.body;
+    if (!blog.title || !blog.author || !blog.url || !blog.likes) {
+      return response.status(400).json({ error: "Missing values" });
     }
-
-    const token = authorization.substring(7);
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-    if (!decodedToken.id) {
-      return response.status(401).json({ error: "token invalid" });
-    }
-
-    const blog = await Blog.findById(request.params.id);
-    if (!blog) {
-      return response.status(404).json({ error: "blog not found" });
-    }
-
-    if (blog.user.toString() !== decodedToken.id) {
-      return response.status(401).json({ error: "only the creator can update this blog" });
-    }
-
-    blog.title = title;
-    blog.author = author;
-    blog.url = url;
-    blog.likes = likes;
-
-    const updatedBlog = await blog.save();
-    return response.status(204).json(updatedBlog);
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+      new: true,
+    });
+    response.json(updatedBlog);
   } catch (error) {
     next(error);
   }

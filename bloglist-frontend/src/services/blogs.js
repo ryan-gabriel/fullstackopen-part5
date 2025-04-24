@@ -26,4 +26,14 @@ const create = async (blog) => {
   }
 };
 
-export default { getAll, create, getBlog };
+const updateLike = async(id, blog) =>{
+  try{
+    const updatedBlog = await axios.put(`${baseUrl}/${id}`, blog);
+    return updatedBlog.data;
+  }
+  catch(error){
+    throw error;
+  }
+}
+
+export default { getAll, create, getBlog, updateLike };
