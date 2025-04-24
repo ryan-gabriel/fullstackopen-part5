@@ -35,6 +35,23 @@ const App = () => {
 
   const blogFormRef = useRef();
 
+  const addBlog = async (blogObject) => {
+    try {
+      blogFormRef.current.toggleVisibility();
+      const createdBlog = await blogService.create(blogObject);
+      setBlogs(blogs.concat(createdBlog));
+      setSuccessCreateMessage(`A new blog "${blogObject.title}" by ${blogObject.author} added`);
+      
+      setTimeout(() => {
+        setSuccessCreateMessage(null);
+      }, 3000);
+      
+    } catch (error) {
+      setErrorMessage(error.response.data.error);
+      throw error
+    }
+  };
+
   if (user === null) {
     return (
       <div>
@@ -54,13 +71,7 @@ const App = () => {
         {user.name} logged in <button onClick={handleLogout}>Log Out</button>
       </p>
       <Togglable buttonLabel="new note" ref={blogFormRef}>
-        <CreateBlogForm
-          setSuccessCreateMessage={setSuccessCreateMessage}
-          setErrorMessage={setErrorMessage}
-          blogs={blogs}
-          setBlogs={setBlogs}
-          formRef={blogFormRef}
-        />
+        <CreateBlogForm createBlog={addBlog} />
       </Togglable>
 
       {blogs.map((blog) => (
