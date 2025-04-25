@@ -36,4 +36,17 @@ const updateLike = async(id, blog) =>{
   }
 }
 
-export default { getAll, create, getBlog, updateLike };
+const deleteBlog = async (id) => {
+  try {
+    const storedUser = window.localStorage.getItem("loggedNoteappUser");
+    const user = JSON.parse(storedUser);
+    const config = {
+      headers: { Authorization: `Bearer ${user.token}` },
+    };
+    await axios.delete(`${baseUrl}/${id}`, config);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export default { getAll, create, getBlog, updateLike, deleteBlog };

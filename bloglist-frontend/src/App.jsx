@@ -76,6 +76,17 @@ const App = () => {
     }
   };
 
+  const deleteBlog = async(id, title, author) =>{
+    try{
+      if(window.confirm(`Remove blog ${title} by ${author}`)){
+        await blogService.deleteBlog(id);
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+      }
+    }catch(e){
+      console.error("Failed to delete blog", e);
+    }
+  }
+
   if (user === null) {
     return (
       <div>
@@ -99,7 +110,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} updateLike={updateLike} />
+        <Blog key={blog.id} blog={blog} updateLike={updateLike} deleteBlog={deleteBlog}/>
       ))}
     </div>
   );
