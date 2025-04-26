@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 
 const Blog = ({ blog, updateLike, deleteBlog }) => {
@@ -31,7 +32,7 @@ const Blog = ({ blog, updateLike, deleteBlog }) => {
 
   return (
     <div style={blogStyle}>
-      <div>
+      <div className="blogHeader">
         {blog.title} {blog.author}{" "}
         <button onClick={toggleVisibility}>{visible ? "hide" : "view"}</button>
       </div>
