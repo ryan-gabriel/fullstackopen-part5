@@ -38,7 +38,7 @@ const Blog = ({ blog, updateLike, deleteBlog }) => {
       </div>
       <div style={showWhenVisible} className="blogDetail">
         {blog.url} <br />
-        likes {likes} <button onClick={handleLike}>like</button> <br />
+        likes {likes} <button className="like-button" onClick={handleLike}>like</button> <br />
         {blog.user.name} <br />
         <button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>
           remove
