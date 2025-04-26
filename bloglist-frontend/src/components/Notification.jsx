@@ -15,4 +15,9 @@ const Notification = ({ message, type }) => {
   </div>;
 };
 
+Notification.propTypes = {
+  message: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(["error", "success"]).isRequired,
+};
+
 export default Notification;

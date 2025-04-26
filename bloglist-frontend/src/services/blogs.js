@@ -9,10 +9,10 @@ const getAll = () => {
 const getBlog = (id) => {
   const request = axios.get(`${baseUrl}/${id}`);
   return request.then((response) => response.data);
-}
+};
 
 const create = async (blog) => {
-  try{
+  try {
     const storedUser = window.localStorage.getItem("loggedNoteappUser");
     const user = JSON.parse(storedUser);
     const config = {
@@ -20,21 +20,19 @@ const create = async (blog) => {
     };
     const response = await axios.post(baseUrl, blog, config);
     return response.data;
-  }
-  catch(error){
+  } catch (error) {
     throw error;
   }
 };
 
-const updateLike = async(id, blog) =>{
-  try{
+const updateLike = async (id, blog) => {
+  try {
     const updatedBlog = await axios.put(`${baseUrl}/${id}`, blog);
     return updatedBlog.data;
-  }
-  catch(error){
+  } catch (error) {
     throw error;
   }
-}
+};
 
 const deleteBlog = async (id) => {
   try {
@@ -47,6 +45,6 @@ const deleteBlog = async (id) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 export default { getAll, create, getBlog, updateLike, deleteBlog };

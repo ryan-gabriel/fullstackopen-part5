@@ -59,4 +59,8 @@ const CreateBlogForm = ({ createBlog }) => {
   );
 };
 
+CreateBlogForm.propTypes = {
+  createBlog: PropTypes.func.isRequired,
+};
+
 export default CreateBlogForm;

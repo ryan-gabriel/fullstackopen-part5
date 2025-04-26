@@ -1,5 +1,4 @@
 import { useState } from "react";
-import blogService from "../services/blogs";
 
 const Blog = ({ blog, updateLike, deleteBlog }) => {
   const [visible, setVisible] = useState(false);
@@ -40,10 +39,27 @@ const Blog = ({ blog, updateLike, deleteBlog }) => {
         {blog.url} <br />
         likes {likes} <button onClick={handleLike}>like</button> <br />
         {blog.user.name} <br />
-        <button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>remove</button>
+        <button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>
+          remove
+        </button>
       </div>
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired,
+    user: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  updateLike: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
 };
 
 export default Blog;
