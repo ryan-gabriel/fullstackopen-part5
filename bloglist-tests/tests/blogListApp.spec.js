@@ -50,15 +50,42 @@ describe("Blog app", () => {
       await page.getByTestId("password").fill("12345678");
       await page.getByRole("button", { name: "login" }).click();
     });
-    
+
     test("a new blog can be created", async ({ page }) => {
+      await page.getByRole("button", { name: "new note" }).click();
+      await page.getByTestId("title").fill("Testing blog title");
+      await page.getByTestId("author").fill("John Doe");
+      await page.getByTestId("url").fill("http://example.com");
+
+      await page.getByRole("button", { name: "Create" }).click();
+      await expect(page.getByText("Testing blog title John Doe")).toBeVisible();
+    });
+
+    describe("and a blog exists", () => {
+      beforeEach(async ({ page }) => {
         await page.getByRole("button", { name: "new note" }).click();
         await page.getByTestId("title").fill("Testing blog title");
         await page.getByTestId("author").fill("John Doe");
         await page.getByTestId("url").fill("http://example.com");
 
         await page.getByRole("button", { name: "Create" }).click();
-        await expect(page.getByText("Testing blog title John Doe")).toBeVisible();
+      });
+
+      test("it can be liked", async ({ page }) => {
+        const button = page.getByRole("button", { name: "view" });
+        expect(button).toBeVisible();
+        await button.click();
+
+        const blogDetail = page.getByText("Testing blog title John Doe");
+        const div = blogDetail.locator("..").locator(".blogDetail");
+        await expect(div).toContainText("likes 0");
+
+        const likeButton = page.getByRole("button", { name: "like" });
+        expect(likeButton).toBeVisible();
+        await likeButton.click();
+
+        await expect(div).toContainText("likes 1");
+      });
     });
   });
 });
