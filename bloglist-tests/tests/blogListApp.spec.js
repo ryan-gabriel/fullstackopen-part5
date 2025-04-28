@@ -24,21 +24,41 @@ describe("Blog app", () => {
 
   describe("Login", () => {
     test("succeeds with correct credentials", async ({ page }) => {
-        await page.getByTestId("username").fill("john")
-        await page.getByTestId("password").fill("12345678");
-        await page.getByText("login").click();
+      await page.getByTestId("username").fill("john");
+      await page.getByTestId("password").fill("12345678");
+      await page.getByRole("button", { name: "login" }).click();
 
-        await expect(page.getByText("John Doe logged in")).toBeVisible();
-        await expect(page.getByText("Wrong username or password")).not.toBeVisible()
+      await expect(page.getByText("John Doe logged in")).toBeVisible();
+      await expect(
+        page.getByText("Wrong username or password")
+      ).not.toBeVisible();
     });
 
     test("fails with wrong credentials", async ({ page }) => {
-        await page.getByTestId("username").fill("john")
-        await page.getByTestId("password").fill("wrong");
-        await page.getByText("login").click();
-        
-        await expect(page.getByText("Wrong username or password")).toBeVisible()
-        await expect(page.getByText("John Doe logged in")).not.toBeVisible()
+      await page.getByTestId("username").fill("john");
+      await page.getByTestId("password").fill("wrong");
+      await page.getByRole("button", { name: "login" }).click();
+
+      await expect(page.getByText("Wrong username or password")).toBeVisible();
+      await expect(page.getByText("John Doe logged in")).not.toBeVisible();
+    });
+  });
+
+  describe("When logged in", () => {
+    beforeEach(async ({ page }) => {
+      await page.getByTestId("username").fill("john");
+      await page.getByTestId("password").fill("12345678");
+      await page.getByRole("button", { name: "login" }).click();
+    });
+    
+    test("a new blog can be created", async ({ page }) => {
+        await page.getByRole("button", { name: "new note" }).click();
+        await page.getByTestId("title").fill("Testing blog title");
+        await page.getByTestId("author").fill("John Doe");
+        await page.getByTestId("url").fill("http://example.com");
+
+        await page.getByRole("button", { name: "Create" }).click();
+        await expect(page.getByText("Testing blog title John Doe")).toBeVisible();
     });
   });
 });
