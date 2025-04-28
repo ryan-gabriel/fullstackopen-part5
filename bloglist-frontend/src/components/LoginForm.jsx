@@ -31,20 +31,24 @@ const LoginForm = ({ setErrorMessage, setUser }) => {
       <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-          username
+          <label htmlFor="username">Username</label>
           <input
+            data-testid="username"
+            id="username"
             type="text"
             value={username}
-            name="Username"
+            name="username"
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-          password
+          <label htmlFor="password">Password</label>
           <input
+            data-testid="password"
+            id="password"
             type="password"
             value={password}
-            name="Password"
+            name="password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
