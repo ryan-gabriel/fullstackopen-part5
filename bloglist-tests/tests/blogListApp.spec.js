@@ -26,7 +26,9 @@ describe("Blog app", () => {
       await page.getByRole("button", { name: "login" }).click();
 
       await expect(page.getByText("John Doe logged in")).toBeVisible();
-      await expect(page.getByText("Wrong username or password")).not.toBeVisible();
+      await expect(
+        page.getByText("Wrong username or password")
+      ).not.toBeVisible();
     });
 
     test("fails with wrong credentials", async ({ page }) => {
@@ -65,7 +67,9 @@ describe("Blog app", () => {
         await page.getByTestId("url").fill("http://example.com");
 
         await page.getByRole("button", { name: "Create" }).click();
-        await expect(page.getByText("Testing blog title John Doe")).toBeVisible();
+        await expect(
+          page.getByText("Testing blog title John Doe")
+        ).toBeVisible();
       });
 
       test("it can be liked", async ({ page }) => {
@@ -99,7 +103,9 @@ describe("Blog app", () => {
         const deleteButton = page.getByRole("button", { name: "remove" });
         await expect(deleteButton).toBeVisible();
         await deleteButton.click();
-        await expect(page.getByText("Testing blog title John Doe")).not.toBeVisible();
+        await expect(
+          page.getByText("Testing blog title John Doe")
+        ).not.toBeVisible();
       });
 
       describe("and another user is logged in", () => {
@@ -121,7 +127,7 @@ describe("Blog app", () => {
           await expect(page.getByText("Jane Doe logged in")).toBeVisible();
         });
 
-        test("it cannot be deleted by another user", async ({ page }) => {
+        test("another user cannot see delete button", async ({ page }) => {
           const button = page.getByRole("button", { name: "view" });
           await expect(button).toBeVisible();
           await button.click();
@@ -129,6 +135,38 @@ describe("Blog app", () => {
           const deleteButton = page.getByRole("button", { name: "remove" });
           await expect(deleteButton).not.toBeVisible();
         });
+      });
+
+      test("it can be ordered by likes", async ({ page }) => {
+        await page.getByRole("button", { name: "new blog" }).click();
+        await page.getByTestId("title").fill("Testing blog title 2");
+        await page.getByTestId("author").fill("John Doe");
+        await page.getByTestId("url").fill("http://example.com");
+
+        await page.getByRole("button", { name: "Create" }).click();
+        const blogs = page.locator(".blogHeader");
+        expect(blogs).toHaveCount(2);
+        await expect(blogs.last()).toContainText(
+          "Testing blog title 2 John Doe"
+        );
+
+        await expect(
+          page.getByText("Testing blog title 2 John Doe")
+        ).toBeVisible();
+
+        const button = page.getByRole("button", { name: "view" }).last();
+        await expect(button).toBeVisible();
+        await button.click();
+
+        const likeButton = page.getByRole("button", { name: "like" });
+        await expect(likeButton).toBeVisible();
+        await likeButton.click();
+        await likeButton.click();
+
+        await expect(blogs.first()).toContainText(
+          "Testing blog title 2 John Doe"
+        );
+        await expect(blogs.last()).toContainText("Testing blog title John Doe");
       });
     });
   });
