@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-const Blog = ({ blog, updateLike, deleteBlog }) => {
+const Blog = ({ loggedUser, blog, updateLike, deleteBlog }) => {
   const [visible, setVisible] = useState(false);
   const [likes, setLikes] = useState(blog.likes);
 
@@ -34,15 +34,23 @@ const Blog = ({ blog, updateLike, deleteBlog }) => {
     <div style={blogStyle}>
       <div className="blogHeader">
         {blog.title} {blog.author}{" "}
-        <button className="toggle-btn" onClick={toggleVisibility}>{visible ? "hide" : "view"}</button>
+        <button className="toggle-btn" onClick={toggleVisibility}>
+          {visible ? "hide" : "view"}
+        </button>
       </div>
       <div style={showWhenVisible} className="blogDetail">
         {blog.url} <br />
-        likes {likes} <button className="like-button" onClick={handleLike}>like</button> <br />
-        {blog.user.name} <br />
-        <button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>
-          remove
-        </button>
+        likes {likes}{" "}
+        <button className="like-button" onClick={handleLike}>
+          like
+        </button>{" "}
+        <br />
+        {blog.user.name == loggedUser.name && (
+          <button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>
+            remove
+          </button>
+        )}
+        <br />
       </div>
     </div>
   );
@@ -61,6 +69,9 @@ Blog.propTypes = {
   }).isRequired,
   updateLike: PropTypes.func.isRequired,
   deleteBlog: PropTypes.func.isRequired,
+  loggedUser: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default Blog;

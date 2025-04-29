@@ -41,6 +41,7 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility();
       const createdBlog = await blogService.create(blogObject);
+      console.log(createdBlog);
       setBlogs(blogs.concat(createdBlog));
       setSuccessCreateMessage(
         `A new blog "${blogObject.title}" by ${blogObject.author} added`
@@ -83,7 +84,10 @@ const App = () => {
         setBlogs(blogs.filter((blog) => blog.id !== id));
       }
     }catch(e){
-      console.error("Failed to delete blog", e);
+      setErrorMessage("Failed to delete blog");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
     }
   }
 
@@ -105,12 +109,12 @@ const App = () => {
       <p>
         {user.name} logged in <button onClick={handleLogout}>Log Out</button>
       </p>
-      <Togglable buttonLabel="new note" ref={blogFormRef}>
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <CreateBlogForm createBlog={addBlog} />
       </Togglable>
 
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} updateLike={updateLike} deleteBlog={deleteBlog}/>
+        <Blog key={blog.id} loggedUser={user} blog={blog} updateLike={updateLike} deleteBlog={deleteBlog}/>
       ))}
     </div>
   );
